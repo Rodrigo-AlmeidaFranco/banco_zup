@@ -2,6 +2,8 @@ package br.com.bancozup.model;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 
 import javax.persistence.Entity;
@@ -37,4 +39,8 @@ public class Endereco {
 	 	
 	 	@NotEmpty(message = "O Estado é obrigatório")
 	    private String estado;
+	 	
+	 	@OneToOne
+		@JoinColumn(name = "cliente_id")
+		private Cliente cliente;
 }

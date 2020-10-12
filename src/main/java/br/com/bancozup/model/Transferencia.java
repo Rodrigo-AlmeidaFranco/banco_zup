@@ -32,4 +32,14 @@ public class Transferencia {
 	@OneToOne
 	@JoinColumn(name = "contaDestinataria_id")
 	private Conta contaDestinataria;
+
+	public Transferencia(double valorTransferencia, Conta contaRemetente, Conta contaDestinataria) {
+		super();
+		this.valorTransferencia = valorTransferencia;
+		this.contaRemetente = contaRemetente;
+		this.contaDestinataria = contaDestinataria;
+	}
+	
+	
+	
 }

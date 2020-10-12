@@ -1,5 +1,7 @@
 package br.com.bancozup.controller;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,42 +20,41 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.bancozup.model.Endereco;
-import br.com.bancozup.service.EnderecoService;
-
+import br.com.bancozup.repository.EnderecoRepo;
 
 @RestController
-@RequestMapping(value="/conta/Endereco")
+@RequestMapping(value = "/endereco")
 public class EnderecoController {
-	
+
 	@Autowired
-    EnderecoService enderecoService;
-	
-	 @GetMapping
-	    public Page<Endereco> busqueTodosEnderecos(@PageableDefault(size = 5) Pageable pageable) {
-	        return enderecoService.busqueTodosClientes(pageable);
-	    }
+	EnderecoRepo enderecoService;
 
-	    @GetMapping("/{id}")
-	    public ResponseEntity<Endereco> busqueEnderecoPeloId(@PathVariable Long id) {
-	        Endereco enderecoEncontradoPeloId = enderecoService.busqueEnderecoPeloId(id);
-	        return ResponseEntity.ok(enderecoEncontradoPeloId);
-	    }
+	@GetMapping
+	public Page<Endereco> busqueTodosEnderecos(@PageableDefault(size = 5) Pageable pageable) {
+		return enderecoService.findAll(pageable);
+	}
 
-	    @GetMapping("/{cep}")
-	    public ResponseEntity<Endereco> busqueEnderecoPeloCep(@PathVariable String cep) {
-	        Endereco enderecoEncontradoPeloCep = enderecoService.busqueEnderecoPeloCep(cep);
-	        return ResponseEntity.ok(enderecoEncontradoPeloCep);
-	    }
+	@GetMapping("/{id}")
+	public Optional<Endereco> getEndereco( @PathVariable Long id ) {
+		return enderecoService.findById(id);
+	}
 
-	    @PutMapping("/{id}")
-	    public ResponseEntity<Endereco> atualizeEnderecoPeloId(@PathVariable Long id, @RequestBody @Valid Endereco endereco) {
-	        Endereco enderecoAtualizado = enderecoService.atualizeEnderecoSeExistir(id, endereco);
-	        return ResponseEntity.ok(enderecoAtualizado);
-	    }
+	@GetMapping("/cep/{cep}")
+	public ResponseEntity<Endereco> busqueEnderecoPeloCep(@PathVariable String cep) {
+		Optional<Endereco> enderecoEncontradoPeloCep = enderecoService.findByCep(cep);
+		return ResponseEntity.ok(enderecoEncontradoPeloCep.get());
+	}
 
-	    @DeleteMapping("/{id}")
-	    @ResponseStatus(HttpStatus.NO_CONTENT)
-	    public void deleteEnderecoPeloId(@PathVariable Long id) {
-	        enderecoService.deleteEnderecoPeloId(id);
-	    }
+	@PutMapping("/{id}")
+	public ResponseEntity<Endereco> atualizeEnderecoPeloId(@PathVariable Long id,
+			@RequestBody @Valid Endereco endereco) {
+		Endereco enderecoAtualizado = enderecoService.save(endereco);
+		return ResponseEntity.ok(enderecoAtualizado);
+	}
+
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteEnderecoPeloId(@PathVariable Long id) {
+		enderecoService.deleteById(id);
+	}
 }
